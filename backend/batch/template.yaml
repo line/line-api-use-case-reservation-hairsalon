@@ -1,0 +1,236 @@
+# Stack:LINE-UseCase-HairSalon-Batch
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  UseCase-Put-Message
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    MemorySize: 128
+    Timeout: 30
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+
+Mappings:
+  EnvironmentMap:
+    dev:
+      MessageTableName: LineRemindMessage
+      LINEChannelAccessTokenDBName: LINEChannelAccessToken
+      EventBridgeName: Line-ShortTermAccessToken-Update
+      LayerVersion: Layer Version
+      LoggerLevel: DEBUG
+      # TTL is True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
+      TTL: False
+      # Set day to delete data
+      # If you set TTL: True, data will be deleted in the period specified below.
+      # Even if you set TTL: False, please set int value.
+      TTLDay: 10
+    prod:
+      MessageTableName: LineMessageInfo DynamoDB Name
+      LINEChannelAccessTokenDBName: LINEChannelAccessTokenLiff
+      EventBridgeName: Line-ShortTermAccessToken-Update-Liff
+      LayerVersion: Layer Version
+      LoggerLevel: DEBUG or INFO
+      # TTL is True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
+      TTL: False or True
+      TTLDay: Set day to delete data
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: CloudWatchAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - ssm:GetParameters
+                Resource: "*"
+        - PolicyName: DynamoTableAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                  - dynamodb:Scan
+                  - dynamodb:PutItem
+                  - logs:CreateLogStream
+                Resource:
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MessageTable}"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MessageTable}/index/*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*"
+                  - !GetAtt LINEChannelAccessTokenDB.Arn
+      RoleName: !Sub "${AWS::StackName}-LambdaRole"
+
+  LINEChannelAccessTokenDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "channelId"
+          AttributeType: S
+      TableName:
+        !FindInMap [
+          EnvironmentMap,
+          !Ref Environment,
+          LINEChannelAccessTokenDBName,
+        ]
+      SSESpecification:
+        SSEEnabled: True
+      KeySchema:
+        - AttributeName: "channelId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  MessageTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: S
+        - AttributeName: "remindDate"
+          AttributeType: S
+      TableName: !FindInMap [EnvironmentMap, !Ref Environment, MessageTableName]
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: "remindDate-index"
+          KeySchema:
+            - AttributeName: "remindDate"
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: "INCLUDE"
+            NonKeyAttributes:
+              - "id"
+              - "messageInfo"
+              - "remindStatus"
+              - "notificationToken"
+              - "nextMessageId"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      TimeToLiveSpecification:
+        AttributeName: "expirationDate"
+        Enabled: !FindInMap [EnvironmentMap, !Ref Environment, TTL]
+
+  PutAccessToken:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: update_line_access_token.lambda_handler
+      Runtime: python3.8
+      CodeUri: update_line_access_token/
+      FunctionName: !Sub HairSalon-PutAccessToken-${Environment}
+      Description: ""
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          CHANNEL_ACCESS_TOKEN_DB: !Ref LINEChannelAccessTokenDB
+
+  MessagingPut:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: messaging_put_dynamo.lambda_handler
+      Runtime: python3.8
+      CodeUri: messaging_put_dynamo/
+      FunctionName: !Sub HairSalon-MessagingPut-${Environment}
+      Description: ""
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          MESSAGE_DB: !Ref MessageTable
+          CHANNEL_ACCESS_TOKEN_DB: !Ref LINEChannelAccessTokenDB
+      Events:
+        EventBridge:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 1 * * ? *)
+
+  EventBridge:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Check&Update for ShortTermAccessToken
+      # EventBusName: String
+      # EventPattern: Json
+      Name: !FindInMap [EnvironmentMap, !Ref Environment, EventBridgeName]
+      # RoleArn: String
+      ScheduleExpression: cron(0 0 * * ? *)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt PutAccessToken.Arn
+          Id: TargetFunctionV1
+
+  PutAccessTokenFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref PutAccessToken
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt EventBridge.Arn
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/
+  LambdaLayer:
+    Description: "Used Layer at Function"
+    Value: !Join
+      - ":"
+      - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+        - !ImportValue HairSalonLayerDev
+        - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+  LINEChannelAccessTokenDB:
+    Description: "DynamoDB ARN for LINEChannelAccessToken"
+    Value: !GetAtt LINEChannelAccessTokenDB.Arn
+  MessageTable:
+    Description: "DynamoDB ARN for Message"
+    Value: !GetAtt MessageTable.Arn

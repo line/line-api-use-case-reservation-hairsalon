@@ -1,0 +1,78 @@
+{
+  "areaId": 2,
+  "areaName": "近畿地区",
+  "course": [
+    {
+      "courseId": 1,
+      "courseMinutes": 120,
+      "courseName": "カット",
+      "price": 4000
+    },
+    {
+      "courseId": 2,
+      "courseMinutes": 90,
+      "courseName": "カラー",
+      "price": 6500
+    },
+    {
+      "courseId": 3,
+      "courseMinutes": 30,
+      "courseName": "シャンプー＆ブロー",
+      "price": 3000
+    },
+    {
+      "courseId": 4,
+      "courseMinutes": 30,
+      "courseName": "トリートメント",
+      "price": 4000
+    }
+  ],
+  "shop": {
+    "closeDay": [
+      0
+    ],
+    "closeTime": "20:00",
+    "coordinate": {
+      "latitude": "35.6894247",
+      "longitude": "139.7021008"
+    },
+    "displayOrder": 1,
+    "imageUrl": "https://media.istockphoto.com/photos/retro-styled-barbershop-picture-id638568556",
+    "lineAccountUrl": "https://line.me/R/ti/p/@xxxxxxxx",
+    "openTime": "10:00",
+    "shopAddress": "大阪府大阪市中央区○×△",
+    "shopId": 1,
+    "shopName": "ヘアサロン 堺筋本町店",
+    "shopTel": "06-xxxx-xxxx"
+  },
+  "shopId": 5,
+  "staff": [
+    {
+      "displayOrder": 1,
+      "gender": 1,
+      "history": 20,
+      "imageUrl": "https://media.istockphoto.com/vectors/user-icon-flat-style-isolated-on-white-background-vector-id1084418050",
+      "message": "お客様に合わせた、お似合いのカットをご提案します",
+      "staffId": 1,
+      "staffName": "Tanaka"
+    },
+    {
+      "displayOrder": 3,
+      "gender": 2,
+      "history": 3,
+      "imageUrl": "https://media.istockphoto.com/vectors/user-icon-flat-style-isolated-on-white-background-vector-id1084418050",
+      "message": "カラーが得意です",
+      "staffId": 2,
+      "staffName": "Yamada"
+    },
+    {
+      "displayOrder": 2,
+      "gender": 2,
+      "history": 10,
+      "imageUrl": "https://media.istockphoto.com/vectors/user-icon-flat-style-isolated-on-white-background-vector-id1084418050",
+      "message": "パーマが得意です",
+      "staffId": 3,
+      "staffName": "Sato"
+    }
+  ]
+}

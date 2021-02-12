@@ -1,0 +1,627 @@
+# Stack:LINE-UseCase-HairSalon
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  UseCase-HairSalon-Backend
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: !FindInMap [EnvironmentMap, !Ref Environment, LambdaMemorySize]
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+  ChannelType:
+    Type: String
+    AllowedValues:
+      - LIFF
+    Default: LIFF
+
+Mappings:
+  EnvironmentMap:
+    dev:
+      LINEOAChannelId: LINEOAChannelId
+      HairSalonShopMasterDBName: HairSalonShopMaster
+      HairSalonReservationInfoDBName: HairSalonReservationInfo
+      HairSalonStaffReservationDBName: HairSalonStaffReservation
+      LINEChannelAccessTokenDBName: LINEChannelAccessToken
+      MessageTable: LineRemindMessage
+      # RemindDateDifference -> Negative value if the day before the day of the reservation(ex: A day ago -> -1)
+      RemindDateDifference: -1
+      FrontS3BucketName: S3Bucket Name
+      LayerVersion: Layer Version
+      LoggerLevel: DEBUG
+      LambdaMemorySize: 128 to 3008
+      # TTL is True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
+      TTL: False
+      # Set day to delete data
+      # If you set TTL: True, data will be deleted in the period specified below.
+      # Even if you set TTL: False, please set int value.
+      TTLDay: Data Delete DayA
+      # ### ACCESS LOG SETTING ###
+      # LogS3Bucket: S3BucketName for AccessLog
+      # LogFilePrefix: hair-salon-sample/
+      # ### ACCESS LOG SETTING ###
+    prod:
+      LINEOAChannelId: OAChannelId
+      HairSalonShopMasterDBName: HairSalonShopMasterDBName
+      HairSalonReservationInfoDBName: HairSalonReservationInfoDBName
+      HairSalonStaffReservationDBName: HairSalonStaffReservationDBName
+      LINEChannelAccessTokenDBName: LINEChannelAccessTokenDBName
+      MessageTable: MessageTableDBName
+      # RemindDateDifference -> Negative value if the day before the day of the reservation(ex: A day ago -> -1)
+      RemindDateDifference: -1
+      FrontS3BucketName: S3Bucket Name
+      LayerVersion: Layer Version
+      LoggerLevel: INFO or DEBUG
+      LambdaMemorySize: 128 to 3008
+      TTL: False or True
+      TTLDay: Data Delete Day
+      # ### ACCESS LOG SETTING ###
+      # LogS3Bucket: S3BucketName for AccessLog
+      # LogFilePrefix: hair-salon-sample/
+      # ### ACCESS LOG SETTING ###
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - dynamodb:GetItem
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*"
+                  - !GetAtt HairSalonShopMasterDB.Arn
+                  - !GetAtt HairSalonReservationInfoDB.Arn
+                  - !GetAtt HairSalonStaffReservationDB.Arn
+                  - !Sub ${HairSalonReservationInfoDB.Arn}/index/*
+                  - !Sub ${HairSalonStaffReservationDB.Arn}/index/*
+                  - !Join
+                    - ""
+                    - - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/
+                      - !FindInMap [
+                          EnvironmentMap,
+                          !Ref Environment,
+                          LINEChannelAccessTokenDBName,
+                        ]
+                  - !Join
+                    - ""
+                    - - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/
+                      - !FindInMap [
+                          EnvironmentMap,
+                          !Ref Environment,
+                          MessageTable,
+                        ]
+                  - !Join
+                    - ""
+                    - - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/
+                      - !FindInMap [
+                          EnvironmentMap,
+                          !Ref Environment,
+                          MessageTable,
+                        ]
+                      - /index/*
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: "*"
+      RoleName: !Sub "${AWS::StackName}-LambdaRole"
+
+  ShopListGet:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: shop_list_get.lambda_handler
+      Runtime: python3.8
+      CodeUri: shop_list_get/
+      FunctionName: !Sub HairSalon-ShopListGet-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+      Tags:
+        Name: LINE
+        App: HairSalon
+      Events:
+        ApiTrigger:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /shop_list_get
+            Method: get
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  StaffListGet:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: staff_list_get.lambda_handler
+      Runtime: python3.8
+      CodeUri: staff_list_get/
+      FunctionName: !Sub HairSalon-StaffListGet-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+      Tags:
+        Name: LINE
+        App: HairSalon
+      Events:
+        ApiTrigger:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /staff_list_get
+            Method: get
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  CourseListGet:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: course_list_get.lambda_handler
+      Runtime: python3.8
+      CodeUri: course_list_get/
+      FunctionName: !Sub HairSalon-CourseListGet-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+      Events:
+        CategoryGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /course_list_get
+            Method: get
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  StaffCalendarGet:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: staff_calendar_get.lambda_handler
+      Runtime: python3.8
+      CodeUri: staff_calendar_get/
+      FunctionName: !Sub HairSalon-StaffCalendarGet-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+          STAFF_RESERVATION_INFO_DB: !Ref HairSalonStaffReservationDB
+      Tags:
+        Name: LINE
+        App: HairSalon
+      Events:
+        ApiTrigger:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /staff_calendar_get
+            Method: get
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  ReservedTimeGet:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: reserved_time_get.lambda_handler
+      Runtime: python3.8
+      CodeUri: reserved_time_get/
+      FunctionName: !Sub HairSalon-ReservedTimeGet-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+          STAFF_RESERVATION_INFO_DB: !Ref HairSalonStaffReservationDB
+      Tags:
+        Name: LINE
+        App: HairSalon
+      Events:
+        ApiTrigger:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /reserved_time_get
+            Method: get
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  ReservationPut:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: reservation_put.lambda_handler
+      Runtime: python3.8
+      CodeUri: reservation_put/
+      FunctionName: !Sub HairSalon-ReservationPut-${Environment}
+      Description: ""
+      Timeout: 3
+      Layers:
+        - !Join
+          - ":"
+          - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+            - !ImportValue HairSalonLayerDev
+            - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          TTL_DAY: !FindInMap [EnvironmentMap, !Ref Environment, TTLDay]
+          OA_CHANNEL_ID:
+            !FindInMap [EnvironmentMap, !Ref Environment, LINEOAChannelId]
+          REMIND_DATE_DIFFERENCE:
+            !FindInMap [EnvironmentMap, !Ref Environment, RemindDateDifference]
+          LOGGER_LEVEL:
+            !FindInMap [EnvironmentMap, !Ref Environment, LoggerLevel]
+          CHANNEL_TYPE:
+            Ref: ChannelType
+          SHOP_MASTER_DB: !Ref HairSalonShopMasterDB
+          RESERVATION_INFO_DB: !Ref HairSalonReservationInfoDB
+          STAFF_RESERVATION_INFO_DB: !Ref HairSalonStaffReservationDB
+          CHANNEL_ACCESS_TOKEN_DB:
+            !FindInMap [
+              EnvironmentMap,
+              !Ref Environment,
+              LINEChannelAccessTokenDBName,
+            ]
+          MESSAGE_DB:
+            !FindInMap [EnvironmentMap, !Ref Environment, MessageTable]
+
+      Tags:
+        Name: LINE
+        App: HairSalon
+      Events:
+        ApiTrigger:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /reservation_put
+            Method: post
+            RestApiId:
+              Ref: HairSalonApiGateway
+
+  HairSalonShopMasterDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "shopId"
+          AttributeType: N
+      TableName:
+        !FindInMap [EnvironmentMap, !Ref Environment, HairSalonShopMasterDBName]
+      KeySchema:
+        - AttributeName: "shopId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  HairSalonReservationInfoDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "reservationId"
+          AttributeType: S
+      TableName:
+        !FindInMap [
+          EnvironmentMap,
+          !Ref Environment,
+          HairSalonReservationInfoDBName,
+        ]
+      KeySchema:
+        - AttributeName: "reservationId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TimeToLiveSpecification:
+        AttributeName: "expirationDate"
+        # True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
+        Enabled: !FindInMap [EnvironmentMap, !Ref Environment, TTL]
+  HairSalonStaffReservationDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "staffId"
+          AttributeType: N
+        - AttributeName: "reservedDay"
+          AttributeType: S
+        - AttributeName: "reservedYearMonth"
+          AttributeType: S
+      TableName:
+        !FindInMap [
+          EnvironmentMap,
+          !Ref Environment,
+          HairSalonStaffReservationDBName,
+        ]
+      KeySchema:
+        - AttributeName: "staffId"
+          KeyType: "HASH"
+        - AttributeName: "reservedDay"
+          KeyType: "RANGE"
+      GlobalSecondaryIndexes:
+        - IndexName: staffId-reservedYearMonth-index
+          KeySchema:
+            - AttributeName: "staffId"
+              KeyType: "HASH"
+            - AttributeName: "reservedYearMonth"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: "INCLUDE"
+            NonKeyAttributes:
+              - "reservableTimeTerm"
+              - "reservedDay"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TimeToLiveSpecification:
+        AttributeName: "expirationDate"
+        # True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
+        Enabled: !FindInMap [EnvironmentMap, !Ref Environment, TTL]
+
+  HairSalonApiGateway:
+    Properties:
+      StageName: !Ref Environment
+      OpenApiVersion: 3.0.2
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'Origin, Authorization, Accept, X-Requested-With, Content-Type, x-amz-date, X-Amz-Security-Token'"
+        AllowMethods: "'GET, POST, OPTIONS'"
+    Type: AWS::Serverless::Api
+    Tags:
+      - Key: "Name"
+        Value: "LINE"
+      - Key: "App"
+        Value: "HairSalon"
+
+  FrontBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        !FindInMap [EnvironmentMap, !Ref Environment, FrontS3BucketName]
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+  # ### ACCESS LOG SETTING ###
+  #     LoggingConfiguration:
+  #       DestinationBucketName: !Ref AccessLogBucket
+  #       LogFilePrefix:
+  #         !FindInMap [EnvironmentMap, !Ref Environment, LogFilePrefix]
+  # AccessLogBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: !FindInMap [EnvironmentMap, !Ref Environment, LogS3Bucket]
+  #     PublicAccessBlockConfiguration:
+  #       BlockPublicAcls: True
+  #       BlockPublicPolicy: True
+  #       IgnorePublicAcls: True
+  #       RestrictPublicBuckets: True
+  #     BucketEncryption:
+  #       ServerSideEncryptionConfiguration:
+  #         - ServerSideEncryptionByDefault:
+  #             SSEAlgorithm: "AES256"
+  #     AccessControl: LogDeliveryWrite
+  # ### ACCESS LOG SETTING ###
+
+  AssetsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontBucket
+      PolicyDocument:
+        Version: "2008-10-17"
+        Id: PolicyForCloudFrontPrivateContent
+        Statement:
+          - Action: s3:GetObject
+            Sid: 1
+            Effect: Allow
+            Resource: !Sub arn:aws:s3:::${FrontBucket}/*
+            Principal:
+              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOriginAccessIdentity}
+            Condition:
+              Bool:
+                "aws:SecureTransport": "true"
+          - Action: s3:*
+            Sid: 2
+            Effect: Deny
+            Principal: "*"
+            Resource: !Sub arn:aws:s3:::${FrontBucket}
+            Condition:
+              Bool:
+                "aws:SecureTransport": "false"
+
+  CloudFrontDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName: !GetAtt FrontBucket.DomainName
+            Id: !Sub "S3-${FrontBucket}"
+            OriginPath: ""
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+        OriginGroups:
+          Quantity: 0
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - "HEAD"
+            - "DELETE"
+            - "POST"
+            - "GET"
+            - "OPTIONS"
+            - "PUT"
+            - "PATCH"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          Compress: false
+          DefaultTTL: 0
+          ForwardedValues:
+            Cookies:
+              Forward: "none"
+            QueryString: false
+          MaxTTL: 0
+          MinTTL: 0
+          SmoothStreaming: false
+          TargetOriginId: !Sub "S3-${FrontBucket}"
+          ViewerProtocolPolicy: "redirect-to-https"
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: "/index.html"
+            ResponseCode: "200"
+            ErrorCachingMinTTL: 0
+        Comment: ""
+        PriceClass: "PriceClass_All"
+        Enabled: true
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+          MinimumProtocolVersion: "TLSv1"
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: "none"
+        HttpVersion: "http2"
+        DefaultRootObject: "index.html"
+        IPV6Enabled: true
+        Logging:
+          Bucket: !GetAtt FrontBucket.DomainName
+          Prefix: log
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ShopListGetApi:
+    Description: "API Gateway endpoint URL for Development stage for ShopListGet function"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/shop_list_get/"
+  ShopListGetFunction:
+    Description: "ShopListGet Lambda Function ARN"
+    Value: !GetAtt ShopListGet.Arn
+  StaffListGetApi:
+    Description: "API Gateway endpoint URL for Development stage for StaffListGet function"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/staff_list_get/"
+  StaffListGetFunction:
+    Description: "StaffListGet Lambda Function ARN"
+    Value: !GetAtt StaffListGet.Arn
+  StaffCalendarGetApi:
+    Description: "API Gateway endpoint URL for Development stage for StaffCalendarGet function"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/staff_calendar_get/"
+  StaffCalendarGetFunction:
+    Description: "StaffCalendarGet Lambda Function ARN"
+    Value: !GetAtt StaffCalendarGet.Arn
+  CourseListGetApi:
+    Description: "API Gateway endpoint URL for Development stage for CourseListGet"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/course_list_get/"
+  CourseListGetFunction:
+    Description: "CourseListGet Lambda Function ARN"
+    Value: !GetAtt CourseListGet.Arn
+  ReservedTimeGetFunction:
+    Description: "API Gateway endpoint URL for Development stage for ReservedTimeGet function"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/reserved_time_get/"
+  ReservationPutApi:
+    Description: "API Gateway endpoint URL for Development stage for ReservationPut function"
+    Value: !Sub "https://${HairSalonApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/reservation_put/"
+  ReservationPutFunction:
+    Description: "ReservationPut Lambda Function ARN"
+    Value: !GetAtt ReservationPut.Arn
+  LambdaLayer:
+    Description: "Used Layer at Function"
+    Value: !Join
+      - ":"
+      - - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer"
+        - !ImportValue HairSalonLayerDev
+        - !FindInMap [EnvironmentMap, !Ref Environment, LayerVersion]
+  LINEOAChannelId:
+    Description: "LINE Mini ChannelId"
+    Value: !FindInMap [EnvironmentMap, !Ref Environment, LINEOAChannelId]
+  LINEChannelType:
+    Description: "LINE ChannelType"
+    Value: !Ref ChannelType
+  CloudFrontDomainName:
+    Description: "CloudFront for HairSalon Demo"
+    Value: !GetAtt CloudFrontDistribution.DomainName
+  S3:
+    Description: "S3 Bucket for Frontend"
+    Value: !Ref FrontBucket

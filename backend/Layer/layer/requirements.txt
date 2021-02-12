@@ -1,0 +1,2 @@
+line-bot-sdk==1.17.0
+line-pay

@@ -1,0 +1,39 @@
+{
+    "name": "nuxt",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "nuxt",
+        "build": "nuxt build",
+        "start": "nuxt start",
+        "export": "nuxt export",
+        "serve": "nuxt serve"
+    },
+    "dependencies": {
+        "@aws-amplify/ui-vue": "0.2.12",
+        "@nuxtjs/axios": "5.11.0",
+        "@nuxtjs/dotenv": "1.4.1",
+        "aws-amplify": "3.0.22",
+        "aws-amplify-vue": "2.1.2",
+        "vue-i18n": "8.22.2",
+        "nuxt": "2.13.3"
+    },
+    "devDependencies": {
+        "@fortawesome/fontawesome-free": "5.14.0",
+        "@fortawesome/fontawesome-svg-core": "1.2.30",
+        "@fortawesome/free-solid-svg-icons": "5.14.0",
+        "@fortawesome/vue-fontawesome": "0.1.10",
+        "@mdi/font": "5.5.55",
+        "@mdi/js": "5.5.55",
+        "@nuxtjs/vuetify": "1.11.2",
+        "bootstrap": "4.5.0",
+        "eslint": "7.6.0",
+        "eslint-plugin-vue": "6.2.2",
+        "font-awesome": "4.7.0",
+        "material-design-icons-iconfont": "5.0.1",
+        "node-sass": "4.14.1",
+        "sass-loader": "9.0.2",
+        "vuedraggable": "2.24.1",
+        "vuex-persistedstate": "3.0.1"
+    }
+}
