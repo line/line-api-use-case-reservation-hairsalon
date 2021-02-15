@@ -1,4 +1,4 @@
-## ローカルでフロントエンド環境構築
+## ローカルフロントエンド環境構築
 フロントエンドの開発は Nuxt.js プロジェクトの SPA (Single Page Application) で開発を行います。ローカル環境で Nuxt 開発用サーバーの起動や本番モジュールの静的ビルドを行います。ソースコードダウンロード後、ローカル環境で以下の作業を行ってください。
 
 - .env ファイルの設定
@@ -6,7 +6,7 @@
     .env ファイルにフロントのアプリケーションで使用する値を設定してください。
 
     ▼ .env ファイル
-    ```` 
+    ````
     # LIFF ID
     LIFF_ID=9999999999-xxxxxxxx
 
@@ -24,13 +24,13 @@
     - `BASE_URL` には AWS APIGateway の URL を設定
     - `APIGATEWAY_STAGE` には AWS APIGateway のステージ名を設定
     - `AJAX_MODULE` には Ajax 通信の時に使用するモジュール（ Amplify API は "amplify" ／ Axios は "axios" ）を設定
-    
+
 - node_modules インストール
 
     front プロジェクトに Node.js の依存パッケージ(※ node_modules フォルダ)がインストールされていない場合、 front フォルダー直下で以下のコマンドを実行して node_modules をインストールしてください。
     ```
     npm install
-    ``` 
+    ```
     もしくは
     ```
     yarn install
@@ -38,7 +38,7 @@
     インストールが完了したら front/`node_modules` フォルダが生成されています。
 
 - LIFF アプリのエンドポイントURLの修正
-    
+
     ローカル開発環境の Web サーバーで開発する為、 LINE チャンネルの LIFF アプリの`エンドポイントURL`を以下の URL に変更してください（※開発完了後 CloudFront の URL に戻してください）。
     ```
     https://localhost:3000

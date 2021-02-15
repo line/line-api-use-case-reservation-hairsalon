@@ -54,8 +54,8 @@ Mac: https://www.python.jp/install/macos/index.html
 
 ### [LINE チャネルの作成](./docs/liff-channel-create.md)
 ### [バックエンドの構築](./docs/back-end-construction.md)
-### [本番（AWS）環境構築](./docs/front-end-construction.md)
-### [ローカル環境構築](./docs/front-end-development-environment.md)
+### [本番（AWS）フロントエンド環境構築](./docs/front-end-construction.md)
+### [ローカルフロントエンド環境構築](./docs/front-end-development-environment.md)
 ***
 ### [テストデータ投入](./docs/test-data-charge.md)
 ***
