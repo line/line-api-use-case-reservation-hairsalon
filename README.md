@@ -62,3 +62,18 @@ Mac: https://www.python.jp/install/macos/index.html
 # License
 HairSalonの全てのファイルは、条件なしで自由にご利用いただけます。
 自由にdownload&cloneをして、LINE APIを活用した素敵なアプリケーションの開発を始めてください！
+
+See [LICENSE](LICENSE) for more detail.
+
+# How to contribute
+
+First of all, thank you so much for taking your time to contribute! LINE API Use Case Hair Salon is not very different from any other open source projects. It will be fantastic if you help us by doing any of the following:
+
+- File an issue in [the issue tracker](https://github.com/line/line-api-use-case-reservation-hairsalon/issues) to report bugs and propose new features and improvements.
+- Ask a question using [the issue tracker](https://github.com/line/line-api-use-case-reservation-hairsalon/issues).
+- Contribute your work by sending [a pull request](https://github.com/line/line-api-use-case-reservation-hairsalon/pulls).
+
+When you are sending a pull request, you'll be considered as being aware of and accepting the followings.
+- Grant [the same license](LICENSE) to the contribution
+- Represent the contribution is your own creation
+- Not expected to provide support for your contribution
