@@ -47,8 +47,6 @@ Mac: https://www.python.jp/install/macos/index.html
 1. （任意）チュートリアル: Hello World アプリケーションの導入
 
 # Getting Started / Tutorial
-
-## 導入手順
 こちらの手順では、アプリケーション開発に必要な「LINEチャネル作成、バックエンド・フロントエンドの構築、テストデータ投入、動作確認」について説明します。
 以下リンク先の手順を参考にし、本番環境（AWS）とローカル環境の構築を行ってください。
 
