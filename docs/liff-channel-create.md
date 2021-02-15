@@ -4,14 +4,12 @@
 本アプリでは以下の LINE チャネルが必要となるので、手順に従って作成してください。
 
 1. MessagingAPI 用 LINE チャネル  
-　・チャネル作成：https://developers.line.biz/ja/docs/clova-extensions-kit/create-messaging-api-channel-t4/
-
-　・Messaging APIについて：https://lineapiusecase.com/ja/api/msgapi.html
+・チャネル作成：https://developers.line.biz/ja/docs/clova-extensions-kit/create-messaging-api-channel-t4/  
+・Messaging APIについて：https://lineapiusecase.com/ja/api/msgapi.html  
 
 1. LIFF 用 LINE チャネル  
-　・チャネル作成：https://developers.line.biz/ja/docs/liff/registering-liff-apps/
-
-　・LIFFについて：https://lineapiusecase.com/ja/api/miniliff.html
+・チャネル作成：https://developers.line.biz/ja/docs/liff/registering-liff-apps/  
+・LIFFについて：https://lineapiusecase.com/ja/api/miniliff.html  
 
 ## 1.LINE アカウントの作成
 
