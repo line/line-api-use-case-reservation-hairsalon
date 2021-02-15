@@ -57,10 +57,8 @@ Mac: https://www.python.jp/install/macos/index.html
 ### [AWSでフロントエンドの環境構築](./docs/front-end-construction.md)
 ### [ローカルでフロントエンド環境構築](./docs/front-end-development-environment.md)
 ***
-## データの投入
 ### [テストデータの投入](./docs/test-data-charge.md)
 ***
-## 動作確認
 ### [動作確認](./docs/validation.md)
 ***
 # License
