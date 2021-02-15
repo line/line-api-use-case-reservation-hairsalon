@@ -5,11 +5,11 @@
 
 1. MessagingAPI 用 LINE チャネル  
    詳細は以下リンクの説明を参照。  
-   https://lineapiusecase.com/ja/api/msgapi.html
+   https://developers.line.biz/ja/docs/clova-extensions-kit/create-messaging-api-channel-t4/
 
 1. LIFF 用 LINE チャネル  
    詳細は以下リンクの説明を参照。  
-   https://lineapiusecase.com/ja/api/miniliff.html
+   https://developers.line.biz/ja/docs/liff/registering-liff-apps/
 
 ## 1.LINE アカウントの作成
 
