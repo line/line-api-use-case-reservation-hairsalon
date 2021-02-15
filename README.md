@@ -49,7 +49,7 @@ Mac: https://www.python.jp/install/macos/index.html
 # Getting Started / Tutorial
 
 ## 導入手順
-こちらの手順では、アプリケーション開発に必要な「LINEチャネル作成、バックエンド・フロントエンドの構築、テストデータを投入、動作確認」について説明します。
+こちらの手順では、アプリケーション開発に必要な「LINEチャネル作成、バックエンド・フロントエンドの構築、テストデータ投入、動作確認」について説明します。
 以下リンク先の手順を参考にし、本番環境（AWS）とローカル環境の構築を行ってください。
 
 ### [LINE チャネルの作成](./docs/liff-channel-create.md)
@@ -57,7 +57,7 @@ Mac: https://www.python.jp/install/macos/index.html
 ### [AWSでフロントエンドの環境構築](./docs/front-end-construction.md)
 ### [ローカルでフロントエンド環境構築](./docs/front-end-development-environment.md)
 ***
-### [テストデータの投入](./docs/test-data-charge.md)
+### [テストデータ投入](./docs/test-data-charge.md)
 ***
 ### [動作確認](./docs/validation.md)
 ***
