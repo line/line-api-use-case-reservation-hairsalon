@@ -61,12 +61,12 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: logs:PutLogEvents
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*:*"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/HairSalon-*:*:*"
               - Effect: Allow
                 Action:
                   - logs:CreateLogStream
                 Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/HairSalon-*:*"
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup

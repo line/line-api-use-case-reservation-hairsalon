@@ -87,7 +87,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: logs:PutLogEvents
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*:*"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/HairSalon-*:*:*"
               - Effect: Allow
                 Action:
                   - logs:CreateLogStream
@@ -98,7 +98,7 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:DeleteItem
                 Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}*:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/HairSalon-*:*"
                   - !GetAtt HairSalonShopMasterDB.Arn
                   - !GetAtt HairSalonReservationInfoDB.Arn
                   - !GetAtt HairSalonStaffReservationDB.Arn

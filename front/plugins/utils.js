@@ -228,47 +228,14 @@ const VueUtils = (app, store) => {
 
         let ret = `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}`;
         if (format !== undefined) {
-            switch (format) {
-            case "yyyy/mm/dd hh:mi:ss":
-                ret = `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}`
-                break;
-            case "yyyy/mm/dd hh:mi":
-                ret = `${yyyy}/${mm}/${dd} ${hh}:${mi}`
-                break;
-            case "yyyy/mm/dd":
-                ret = `${yyyy}/${mm}/${dd}`
-                break;
-            case "yyyy-mm-dd hh:mi:ss":
-                ret = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`
-                break;
-            case "yyyy-mm-dd hh:mi":
-                ret = `${yyyy}-${mm}-${dd} ${hh}:${mi}`
-                break;
-            case "yyyy-mm-dd":
-                ret = `${yyyy}-${mm}-${dd}`
-                break;
-            case "hh:mi:ss":
-                ret = `${hh}:${mi}:${ss}`
-                break;
-            case "hh:mi":
-                ret = `${hh}:${mi}`
-                break;
-            case "yyyymmdd hhmiss":
-                ret = `${yyyy}${mm}${dd} ${hh}${mi}${ss}`
-                break;
-            case "yyyymmdd":
-                ret = `${yyyy}${mm}${dd}`
-                break;
-            case "yyyymm":
-                ret = `${yyyy}${mm}${dd}`
-                break;
-            case "hhmiss":
-                ret = `${hh}${mi}${ss}`
-                break;
-            case "hhmi":
-                ret = `${hh}${mi}`
-                break;
-            }
+            let strFormat = format.toLowerCase();
+            strFormat = strFormat.replace("yyyy", yyyy);
+            strFormat = strFormat.replace("mm", mm);
+            strFormat = strFormat.replace("dd", dd);
+            strFormat = strFormat.replace("hh", hh);
+            strFormat = strFormat.replace("mi", mi);
+            strFormat = strFormat.replace("ss", ss);
+            ret = strFormat
         }
 
         return ret;
