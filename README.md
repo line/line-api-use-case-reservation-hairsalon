@@ -63,7 +63,7 @@ Mac: https://www.python.jp/install/macos/index.html
 HairSalonの全てのファイルは、条件なしで自由にご利用いただけます。
 自由にdownload&cloneをして、LINE APIを活用した素敵なアプリケーションの開発を始めてください！
 
-See [LICENSE](LICENSE) for more detail.
+See [LICENSE](LICENSE) for more detail.(English)
 
 # How to contribute
 
