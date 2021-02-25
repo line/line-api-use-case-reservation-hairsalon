@@ -7,7 +7,6 @@ class HairSalonParamCheck(ParamCheck):
         self.shop_name = params['shopName'] if 'shopName' in params else None
         self.staff_id = params['staffId'] if 'staffId' in params else None
         self.staff_name = params['staffName'] if 'staffName' in params else None  # noqa:E501
-        self.user_id = params['userId'] if 'userId' in params else None
         self.user_name = params['userName'] if 'userName' in params else None
         self.course_minutes = params['courseMinutes'] if 'courseMinutes' in params else None  # noqa:E501
         self.preferred_year_month = params['preferredYearMonth'] if 'preferredYearMonth' in params else None  # noqa:E501
@@ -46,7 +45,6 @@ class HairSalonParamCheck(ParamCheck):
         return self.error_msg
 
     def check_api_reservation_put(self):
-        self.check_user_id()
         self.check_user_name()
         self.check_access_token()
         self.check_shop_id()
@@ -108,14 +106,6 @@ class HairSalonParamCheck(ParamCheck):
 
         if error := self.check_year_month(self.preferred_year_month,
                                           'preferredYearMonth'):
-            self.error_msg.append(error)
-
-    def check_user_id(self):
-        if error := self.check_required(self.user_id, 'userId'):
-            self.error_msg.append(error)
-            return
-
-        if error := self.check_length(self.user_id, 'userId', 1, None):
             self.error_msg.append(error)
 
     def check_user_name(self):

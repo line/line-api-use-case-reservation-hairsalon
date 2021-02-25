@@ -110,7 +110,8 @@ sam deploy --guided
   backend -> APP フォルダ内の template.yaml を開き、EnvironmentMap の dev の以下のパラメータ項目を修正する。  
   ※S3のアクセスログが必要な場合、ACCESS LOG SETTING とコメントされている箇所のコメントを解除してください。
 
-  - `LINEOAChannelId` 【LINE チャネルの作成】で作成したチャネルのチャネル ID
+  - `LINEOAChannelId` 【LINE チャネルの作成】で作成したMessaging API 用のチャネルのチャネル ID
+  - `LIFFChannelId` 【LINE チャネルの作成】で作成したLIFF 用のチャネルのチャネル ID
   - `HairSalonShopMasterDBName` 任意のテーブル名（ヘアサロンの店舗情報を登録するテーブル）
   - `HairSalonReservationInfoDBName` 任意のテーブル名（顧客の予約情報を管理するテーブル）
   - `HairSalonStaffReservationDBName` 任意のテーブル名（ヘアサロンスタッフごとの予約情報を管理するテーブル）

@@ -197,6 +197,14 @@ const VueUtils = (app, store) => {
          */
         showHttpError(error) {
             if (error.response && error.response.status >= 400) {
+                // HTTP 403 Topへ画面遷移
+                if (error.response.status == 403) {
+                    const errmsg = error.response.data ? error.response.data : _i18n.error.msg005;
+                    window.alert(errmsg);
+                    window.location = `https://liff.line.me/${process.env.LIFF_ID}`;
+                    return true;
+                }
+    
                 const response = error.response;
                 setTimeout(() => {
                     store.commit("axiosError", `status=${response.status} ${response.statusText} ${response.data}`);
@@ -235,7 +243,7 @@ const VueUtils = (app, store) => {
             strFormat = strFormat.replace("hh", hh);
             strFormat = strFormat.replace("mi", mi);
             strFormat = strFormat.replace("ss", ss);
-            ret = strFormat
+            ret = strFormat;
         }
 
         return ret;

@@ -82,6 +82,7 @@ LINE Developers は本アプリで必要な LINE 公式アカウントの作成�
    1. 作成を押下し、チャネルを作成する
    1. 以下画像のような作成したチャネルの画面が表示され、チャネルの作成が完了したことを確認する。
       ![チャネルの作成_4](images/line-channel-create-4.png)
+      ※チャネル基本設定のタブに表示されているチャネル IDを以降の手順にて使用するので、メモを取っておいてください。
 1. 「リンクされたボット」の設定
    1. 先ほど作成したLIFFのチャネルのチャネル基本設定のタブにて、「リンクされたボット」項目の編集ボタンを押下する。
    1. プルダウンからMessagingAPIのチャネルを選択し、更新を行う。
@@ -95,7 +96,7 @@ LINE Developers は本アプリで必要な LINE 公式アカウントの作成�
          https://developers.line.biz/ja/docs/liff/overview/#screen-size
       1. エンドポイント URL： https://example.com
          ※アプリの作成後、再度設定するので仮の値を入れておきます。
-      1. Scope: profile のみチェック
+      1. Scope: openid,profile にチェック
       1. ボットリンク機能： On(Aggressive)
          ※LIFF アプリ起動時に、紐づけられた LINE 公式アカウントの友達追加をどのように促すかという設定です。
       1. Scan QR： off

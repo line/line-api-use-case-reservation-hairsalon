@@ -27,6 +27,7 @@ Mappings:
   EnvironmentMap:
     dev:
       LINEOAChannelId: LINEOAChannelId
+      LIFFChannelId: LIFFChannelId
       HairSalonShopMasterDBName: HairSalonShopMaster
       HairSalonReservationInfoDBName: HairSalonReservationInfo
       HairSalonStaffReservationDBName: HairSalonStaffReservation
@@ -50,6 +51,7 @@ Mappings:
       # ### ACCESS LOG SETTING ###
     prod:
       LINEOAChannelId: OAChannelId
+      LIFFChannelId: LIFFChannelId
       HairSalonShopMasterDBName: HairSalonShopMasterDBName
       HairSalonReservationInfoDBName: HairSalonReservationInfoDBName
       HairSalonStaffReservationDBName: HairSalonStaffReservationDBName
@@ -320,6 +322,8 @@ Resources:
           TTL_DAY: !FindInMap [EnvironmentMap, !Ref Environment, TTLDay]
           OA_CHANNEL_ID:
             !FindInMap [EnvironmentMap, !Ref Environment, LINEOAChannelId]
+          LIFF_CHANNEL_ID:
+            !FindInMap [EnvironmentMap, !Ref Environment, LIFFChannelId]
           REMIND_DATE_DIFFERENCE:
             !FindInMap [EnvironmentMap, !Ref Environment, RemindDateDifference]
           LOGGER_LEVEL:

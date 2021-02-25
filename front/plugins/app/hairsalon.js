@@ -176,7 +176,6 @@ const VueHairsalon = ($axios, app, store, env) => {
         /**
          *　担当者日別 予約状況取得　
          *
-         * @param {string} userId ユーザーID
          * @param {number} shopId 店舗ID
          * @param {number} staffId スタッフID
          * @param {number} day 予約日
@@ -186,11 +185,14 @@ const VueHairsalon = ($axios, app, store, env) => {
          * @param {Object} selectedMenu 指定メニュー情報
          * @return {Array<Object>} 担当者日別予約状況 
          */
-        async getStaffDailySchedule(userId, shopId, staffId, day, schedule, hairsalon, menu, selectedMenu) {
+        async getStaffDailySchedule(shopId, staffId, day, schedule, hairsalon, menu, selectedMenu) {
             let ret = [];
 
+            // LIFF ID Token取得
+            const idToken = store.state.lineUser.idToken;
+
             // 担当者月別予約状況データ取得
-            const data = await this[_module].staffDailyData(userId, shopId, staffId, day, schedule);
+            const data = await this[_module].staffDailyData(idToken, shopId, staffId, day, schedule);
             if (!data) { return ret };
 
             if ("reservedInfo" in data) {
@@ -252,7 +254,6 @@ const VueHairsalon = ($axios, app, store, env) => {
         /**
          * 予約登録
          *
-         * @param {string} userId ユーザーID
          * @param {string} token アクセストークン
          * @param {number} shopId 店舗ID
          * @param {number} day 予約日
@@ -264,10 +265,12 @@ const VueHairsalon = ($axios, app, store, env) => {
          * @param {Object} names ユーザー、スタッフ、コース名称
          * @return {Object} 予約ID 
          */
-        async updateReserve(userId, token, shopId, day, start, end, courseId, staffId, price, names) {
+        async updateReserve(token, shopId, day, start, end, courseId, staffId, price, names) {
+            // LIFF ID Token取得
+            const idToken = store.state.lineUser.idToken;
             // 送信パラメーター
             const params = {
-                userId: userId,
+                idToken: idToken,
                 accessToken: token,
                 shopId: shopId,
                 shopName: names.shopName,
@@ -670,19 +673,19 @@ const VueHairsalon = ($axios, app, store, env) => {
             /**
              * 予約済時間取得API
              *
-             * @param {string} userId ユーザーID
+             * @param {string} idToken IDトークン
              * @param {number} shopId 店舗ID
              * @param {number} staffId スタッフID
              * @param {string} day 予約日時
              * @return {Object} APIレスポンス内容 
              */
-            staffDailyData: async(userId, shopId, staffId, day) => {
+            staffDailyData: async(idToken, shopId, staffId, day) => {
                 // 送信パラメーター
                 const params = {
                     locale: store.state.locale,
                     shopId: shopId,
                     staffId: staffId,
-                    userId: userId,
+                    idToken: idToken,
                     preferredDay: day,
                 };
                 // GET送信
@@ -813,7 +816,7 @@ const VueHairsalon = ($axios, app, store, env) => {
                 return response;
             },
             // 予約済時間取得API
-            staffDailyData: async(userId, shopId, staffId, day) => {
+            staffDailyData: async(idToken, shopId, staffId, day) => {
                 let response = null;
                 // 送信パラメーター
                 const myInit = {
@@ -821,7 +824,7 @@ const VueHairsalon = ($axios, app, store, env) => {
                         locale: store.state.locale,
                         shopId: shopId,
                         staffId: staffId,
-                        userId: userId,
+                        idToken: idToken,
                         preferredDay: day,
                     },
                 };

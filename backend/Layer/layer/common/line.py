@@ -48,3 +48,33 @@ def send_push_message(channel_access_token, flex_obj, user_id):
         raise Exception
 
     return response
+
+
+def get_profile(id_token, channel_id):
+    """
+    プッシュメッセージ送信処理
+    Parameters
+    id_token:str
+        IDトークン
+    channel_id:dict
+        使用アプリのLIFFチャネルID
+    Returns
+    -------
+    res_body:dict
+        レスポンス情報
+    """
+    
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    body = {
+        'id_token': id_token,
+        'client_id': channel_id
+    }
+
+    response = requests.post(
+        common_const.const.API_USER_ID_URL,
+        headers=headers,
+        data=body
+    )
+    
+    res_body = json.loads(response.text)
+    return res_body

@@ -19,6 +19,7 @@ REMIND_DATE_DIFFERENCE = int(os.getenv(
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL")
 CHANNEL_TYPE = os.environ.get("CHANNEL_TYPE")
 CHANNEL_ID = os.getenv('OA_CHANNEL_ID', None)
+LIFF_CHANNEL_ID = os.getenv('LIFF_CHANNEL_ID', None)
 
 # テーブル操作クラスの初期化
 shop_master_table_controller = HairSalonShopMaster()
@@ -254,6 +255,17 @@ def lambda_handler(event, context):
     if body is None:
         error_msg_display = common_const.const.MSG_ERROR_NOPARAM
         return utils.create_error_response(error_msg_display, 400)
+    #ユーザーID取得
+    try:
+        user_profile = line.get_profile(
+            body['idToken'], LIFF_CHANNEL_ID)
+        if 'error' in user_profile and 'expired' in user_profile['error_description']:  # noqa 501
+            return utils.create_error_response('Forbidden', 403)
+        else:
+            body['userId'] = user_profile['sub']
+    except Exception:
+        logger.exception('不正なIDトークンが使用されています')
+        return utils.create_error_response('Error')
 
     param_checker = validation.HairSalonParamCheck(body)  # noqa 501
     if error_msg := param_checker.check_api_reservation_put():

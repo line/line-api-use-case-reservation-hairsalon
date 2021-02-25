@@ -673,10 +673,9 @@ export default {
             this.reserveDate = date;
             this.reserveButton = (schedule.status==1) ? false : true;
             // 日別予約状況取得
-            const userId = this.$store.state.lineUser.userId;
             const shopId = this.hairsalon.id;
             const staffId = this.staff.staffId;
-            schedule.events = await this.$hairsalon.getStaffDailySchedule(userId, shopId, staffId, date, schedule, this.hairsalon, this.menu, this.sendReserve.menu);
+            schedule.events = await this.$hairsalon.getStaffDailySchedule(shopId, staffId, date, schedule, this.hairsalon, this.menu, this.sendReserve.menu);
 
             this.events = schedule.events;
             this.sendReserve.day = date;
@@ -770,7 +769,6 @@ export default {
             const ret = this.$refs.form.validate();
 
             if (ret) {
-                const userId = this.$store.state.lineUser.userId;
                 const token = this.$store.state.lineUser.token;
                 const shopId = this.hairsalon.id;
                 const day = input.day;
@@ -805,7 +803,7 @@ export default {
                 try {
                     this.$processing.show(0, this.$t("calendar.msg015"));
                     // 予約登録送信
-                    const data = await this.$hairsalon.updateReserve(userId, token, shopId, day, start, end, courseId, staffId, price, names);
+                    const data = await this.$hairsalon.updateReserve(token, shopId, day, start, end, courseId, staffId, price, names);
                     if (data) {
                         const reservationId = data.reservationId;
                         if (isNaN(reservationId)) {
