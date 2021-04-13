@@ -62,27 +62,27 @@ In this section, you'll learn how to create a LINE channel, build the back-end a
 
 See these steps to build the production environment (AWS) and the local environment:
 
-### [LINE チャネルの作成](./docs/liff-channel-create.md)
-### [バックエンドの構築](./docs/back-end-construction.md)
-### [本番（AWS）フロントエンド環境構築](./docs/front-end-construction.md)
-### [ローカルフロントエンド環境構築](./docs/front-end-development-environment.md)
+### [Create a LINE channel](./docs/liff-channel-create.md)
+### [Build the backend](./docs/back-end-construction.md)
+### [Build front end production environment (AWS)](./docs/front-end-construction.md)
+### [Build a local front end environment](./docs/front-end-development-environment.md)
 ***
-### [テストデータ投入](./docs/test-data-charge.md)
+### [Test data input](./docs/test-data-charge.md)
 ***
-### [動作確認](./docs/validation.md)
+### [Check operation](./docs/validation.md)
 ***
 
 # License
 
 All files on HairSalon are free to use without conditions.
 
-Download and clone to start developing apps using LINE API!
+Download and clone to start developing apps using LINE API.
 
 See [LICENSE](LICENSE) for details. (English)
 
 # How to contribute
 
-Thank you for taking your time to contribute! LINE API Use Case Hair Salon isn't different from any other open source projects. You can help by:
+Thank you for taking the time to contribute. LINE API Use Case Hair Salon isn't different from any other open source projects. You can help by:
 
 - Filing an issue in [the issue tracker](https://github.com/line/line-api-use-case-reservation-hairsalon/issues) to report bugs and propose new features and improvements.
 - Asking a question using [the issue tracker](https://github.com/line/line-api-use-case-reservation-hairsalon/issues).
