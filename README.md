@@ -1,6 +1,6 @@
 # Overview
 
-This is the demo app source code for the [Hair Salon Reservation](https://lineapiusecase.com/en/usecase/reservation.html) provided on the [LINE API Use Case site](https://lineapiusecase.com/en/top.html). By referring to the steps described in this article, you can develop a hair salon reservation app using the LINE API. The hair salon reservation app is launched on the LIFF browser of the LINE app, and you can make a reservation at the hair salon. To prevent users from forgetting to visit the store, you can implement a reminder function via LINE message by default.
+This is the demo app source code for the [Hair Salon Reservation](https://lineapiusecase.com/en/usecase/reservation.html) provided on the [LINE API Use Case site](https://lineapiusecase.com/en/top.html). By referring to the steps described in this article, you can develop a hair salon reservation app using the LINE API. The hair salon reservation app is launched on the LIFF browser in the LINE app, and you can make a reservation at the hair salon. To prevent users from forgetting to visit the store, you can implement a reminder function via a LINE message by default.
 
 The source code environment introduced on this page uses AWS.
 
@@ -14,7 +14,7 @@ Install Node.js, which will be used for the front-end development, in your local
 
 *We recommend installing the latest Long-Term Support (LTS) version (v10.13 or later).
 
-- [Download Node.js](https://nodejs.org/ja/download/)
+- [Download Node.js](https://nodejs.org/en/download/)
 
 ## Python
 
