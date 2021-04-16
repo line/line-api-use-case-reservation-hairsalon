@@ -60,12 +60,12 @@ Complete these items in the official documentation and proceed to the next step.
 
 # Getting started / Tutorial
 
-In this section, you'll learn how to create a LINE channel, build the backend and front-end, submit test data, and operation verification, required for app development.
+In this section, you'll learn how to create a LINE channel, build the back-end and front-end, submit test data, and operation verification, required for app development.
 
 See these steps to build the production environment (AWS) and the local environment:
 
 - **[Create a LINE channel](./docs/liff-channel-create.md)**
-- **[Build the backend](./docs/back-end-construction.md)**
+- **[Build the back-end](./docs/back-end-construction.md)**
 - **[Build front end production environment (AWS)](./docs/front-end-construction.md)**
 - **[Build a local front end environment](./docs/front-end-development-environment.md)**
 ***
