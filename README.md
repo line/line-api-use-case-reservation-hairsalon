@@ -32,7 +32,7 @@ If Python is installed, the version will be returned. For example:
 Python 3.8.3
 ```
 
-Install Python (3.8 or higher), used for backend development, in your local development environment if it's not already installed.
+Install Python (3.8 or higher), used for back-end development, in your local development environment if it's not already installed.
 
 Python installation reference site:
 
