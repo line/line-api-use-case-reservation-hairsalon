@@ -32,6 +32,9 @@ Windows: https://www.python.jp/install/windows/install.html
 Mac: https://www.python.jp/install/macos/index.html
 
 ## AWS SAM
+
+※ 注意：5月12日現在AWS側で不具合があり、コマンド実行時にエラーとなる可能性があります。実行時にエラーが出た場合は、該当ファイルの該当プロパティを削除してください。
+
 本アプリケーションのデプロイには、AWS サーバーレスアプリケーションモデル(AWS SAM)を利用します。
 [AWS公式ドキュメント](https://docs.aws.amazon.com/ja_jp/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
 )を参考に、AWS アカウントの登録と設定、AWS SAM CLI と Docker のインストールを行ってください。  
