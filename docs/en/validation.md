@@ -16,7 +16,7 @@ Set the endpoint URL of the LIFF app created in [Create LINE channel > Add LIFF 
 
 ## Rich menu settings
 
-If you want to set the rich menu and start the app, see this link to set it up.
+If you want to set the rich menu and start the app, see this link to set it up.  
 https://developers.line.biz/en/docs/messaging-api/using-rich-menus/#creating-a-rich-menu-with-the-line-manager
 
 # Operation check
