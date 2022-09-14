@@ -4,4 +4,10 @@ version = 0.1
 [default.deploy.parameters]
 region = "ap-northeast-1"
 capabilities = "CAPABILITY_NAMED_IAM"
-parameter_overrides = "Environment=\"dev\""
+parameter_overrides = "Environment=\"dev\" ChannelType=\"LIFF\""
+stack_name = "liff-app-backend"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1r9jkp1vwkgl2"
+s3_prefix = "liff-app-backend"
+confirm_changeset = true
+disable_rollback = true
+image_repositories = []

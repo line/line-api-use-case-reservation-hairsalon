@@ -11,12 +11,19 @@
     },
     "dependencies": {
         "@aws-amplify/ui-vue": "0.2.12",
+        "@nuxt/babel-preset-app": "^2.15.8",
+        "@nuxt/webpack": "^2.15.8",
         "@nuxtjs/axios": "5.11.0",
         "@nuxtjs/dotenv": "1.4.1",
         "aws-amplify": "3.0.22",
         "aws-amplify-vue": "2.1.2",
+        "babel-loader": "^8.2.5",
+        "nuxt": "2.13.3",
         "vue-i18n": "8.22.2",
-        "nuxt": "2.13.3"
+        "webpack": "^4.45.0",
+        "sass-loader": "^7.2.0",
+        "sass": "^1.22.10",
+        "fibers": "^4.0.1"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "5.14.0",
@@ -27,13 +34,13 @@
         "@mdi/js": "5.5.55",
         "@nuxtjs/vuetify": "1.11.2",
         "bootstrap": "4.5.0",
-        "eslint": "7.6.0",
-        "eslint-plugin-vue": "6.2.2",
+        "eslint": "8.23.1",
+        "eslint-plugin-vue": "9.4.0",
         "font-awesome": "4.7.0",
         "material-design-icons-iconfont": "5.0.1",
-        "node-sass": "4.14.1",
-        "sass-loader": "9.0.2",
+
         "vuedraggable": "2.24.1",
         "vuex-persistedstate": "3.0.1"
+        
     }
 }

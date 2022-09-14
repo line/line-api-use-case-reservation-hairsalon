@@ -8,7 +8,7 @@
                 </v-chip>
             </v-toolbar-title>
         </v-app-bar>
-        <!-- Weekdays Header　-->
+        <!-- Weekdays Header -->
         <v-alert icon="info" outlined prominent border="left" class="mt-16 ma-2" style="color:#00ba00;">
             <span class="info-hairsalon"><span v-html="$t('staffs.msg001', { salon: hairsalon.name })"></span></span>
             <span class="float-right info-hairsalon-subtext mt-1" style="color:#FF8A80;">{{ $t("staffs.msg002") }}</span>
@@ -99,7 +99,7 @@
  * スタッフ選択画面
  * 
  */
-import VueFooter from "~/components/hairsalon/Footer.vue"
+import VueFooter from "~/components/hairsalon/Footer.vue";
 
 export default {
     layout: "reserve/hairsalon",

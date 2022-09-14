@@ -42,7 +42,7 @@
                 </v-chip>
             </v-toolbar-title>
         </v-app-bar>
-        <!-- Weekdays Header　-->
+        <!-- Weekdays Header -->
         <v-container fluid style="margin-top:82px;">
             <v-row justify="center">
                 <v-col class="ma-0 pa-0 text-center"><span style="font-weight:bold; color:red;">{{ $t("utils.sun") }}</span></v-col>
@@ -284,7 +284,7 @@
  * 予約カレンダー画面
  * 
  */
-import VueFooter from "~/components/hairsalon/Footer.vue"
+import VueFooter from "~/components/hairsalon/Footer.vue";
 
 export default {
     layout: "reserve/hairsalon",
