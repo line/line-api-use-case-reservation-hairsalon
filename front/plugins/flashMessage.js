@@ -3,37 +3,36 @@ import Vue from "vue"
 /**
  * フラッシュメッセージプラグイン
  *
- * @return {Object} 
+ * @return {Object}
  */
 const VueFlashMessage = () => {
-
-    let _message = {};
+    let _message = {}
 
     return {
         get(name) {
             if (name in _message) {
-                const ret = Vue.util.extend(_message[name]);
-                delete _message[name];
-                return ret;
+                const ret = Vue.util.extend(_message[name])
+                delete _message[name]
+                return ret
             }
-            return undefined;
+            return undefined
         },
         set(name, value) {
-            _message[name] = value;
+            _message[name] = value
         },
         hold(name) {
-            return _message[name];
+            return _message[name]
         },
         clear(name) {
             if (name === undefined) {
-                _message = {};
+                _message = {}
             } else if (name in _message) {
-                delete _message[name];
+                delete _message[name]
             }
-        }
-    };
+        },
+    }
 }
 
 export default ({}, inject) => {
-    inject("flash", VueFlashMessage());
+    inject("flash", VueFlashMessage())
 }

@@ -1,8 +1,8 @@
-import Amplify from "aws-amplify";
-import API from "@aws-amplify/api";
+import API from "@aws-amplify/api"
+import Amplify from "aws-amplify"
 
 // Amplify設定
-Amplify['API'] = API;
+Amplify["API"] = API
 Amplify.configure({
     API: {
         endpoints: [
@@ -10,9 +10,9 @@ Amplify.configure({
                 name: "LambdaAPIGateway",
                 endpoint: process.env.BASE_URL,
             },
-        ]        
-    }
-});
+        ],
+    },
+})
 
 /**
  * Amplifyプラグイン
@@ -20,9 +20,9 @@ Amplify.configure({
  * @return {Object}
  */
 const VueAmplify = () => {
-    return Amplify;
+    return Amplify
 }
 
 export default ({}, inject) => {
-    inject("amplify", VueAmplify());
+    inject("amplify", VueAmplify())
 }

@@ -1,20 +1,18 @@
 {
     "env": {
         "browser": true,
-        "es2020": true
+        "es2020": true,
+        "node": true // node の環境変数を追加
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:vue/essential"
-    ],
+    "extends": ["eslint:recommended", "plugin:vue/essential"],
     "parserOptions": {
         "ecmaVersion": 11,
         "sourceType": "module"
     },
-    "plugins": [
-        "vue"
-    ],
+    "plugins": ["vue"],
     "rules": {
-        "vue/multi-word-component-names": "off"
+        "vue/multi-word-component-names": "off",
+        "no-unused-vars": "off",
+        "eslint:recommended": "on"
     }
 }
