@@ -10,14 +10,14 @@
         "serve": "nuxt serve"
     },
     "dependencies": {
-        "@aws-amplify/ui-vue": "0.2.12",
+        "@aws-amplify/ui-vue": "^2.4.21",
         "@line/liff": "^2.21.1",
         "@nuxt/babel-preset-app": "^2.15.8",
         "@nuxt/webpack": "^2.15.8",
         "@nuxtjs/axios": "5.11.0",
         "@nuxtjs/dotenv": "1.4.1",
-        "aws-amplify": "3.0.22",
-        "aws-amplify-vue": "2.1.2",
+        "aws-amplify": "^4.3.35",
+        "aws-amplify-vue": "^2.1.5",
         "babel-loader": "^8.2.5",
         "fibers": "^4.0.1",
         "nuxt": "2.13.3",
