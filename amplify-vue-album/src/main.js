@@ -15,4 +15,15 @@ applyPolyfills().then(() => {
   defineCustomElements(window);
 });
 
+Amplify.configure({
+  API: {
+    endpoints: [
+      {
+        name: "LambdaAPIGateway",
+        endpoint: "https://ect2qmyf4e.execute-api.ap-northeast-1.amazonaws.com",
+      },
+    ],
+  },
+});
+
 createApp(App).use(store).use(router).mount("#app");
