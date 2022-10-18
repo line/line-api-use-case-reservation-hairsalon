@@ -6,8 +6,8 @@
 
 <script>
 /**
- * HTTP 404 Error Page 
- * 
+ * HTTP 404 Error Page
+ *
  */
 export default {
     data() {
@@ -16,10 +16,10 @@ export default {
                 backgroundImage: "url(https://media.istockphoto.com/photos/error-picture-id1157134529)",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
-                backgroundPosition: "center center"
+                backgroundPosition: "center center",
             },
         }
-    }
+    },
 }
 </script>
 
@@ -32,7 +32,7 @@ export default {
 .font-size {
     font-size: 24px;
 }
-@media screen and (max-width:540px) {
+@media screen and (max-width: 540px) {
     .font-size {
         font-size: 18px;
     }

@@ -24,7 +24,7 @@ Mappings:
       MessageTableName: LineRemindMessage
       LINEChannelAccessTokenDBName: LINEChannelAccessToken
       EventBridgeName: Line-ShortTermAccessToken-Update
-      LayerVersion: Layer Version
+      LayerVersion: 1
       LoggerLevel: DEBUG
       # TTL is True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
       TTL: False
@@ -36,7 +36,7 @@ Mappings:
       MessageTableName: LineMessageInfo DynamoDB Name
       LINEChannelAccessTokenDBName: LINEChannelAccessTokenLiff
       EventBridgeName: Line-ShortTermAccessToken-Update-Liff
-      LayerVersion: Layer Version
+      LayerVersion: 1
       LoggerLevel: DEBUG or INFO
       # TTL is True:Reservation Data will be deleted at the specified date, False:Data will not be deleted
       TTL: False or True

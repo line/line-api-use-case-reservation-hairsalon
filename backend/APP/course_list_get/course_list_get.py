@@ -1,7 +1,8 @@
-import logging
 import json
+import logging
 import os
-from common import (common_const, utils)
+
+from common import common_const, utils
 from hair_salon.hair_salon_shop_master import HairSalonShopMaster
 from validation import hair_salon_param_check as validation
 
